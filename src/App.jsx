@@ -1,31 +1,28 @@
-import ContactForm from "./components/contactForm/contactForm"
-import ContactList from "./components/contactList/contactList"
-import SearchBox from "./components/searchBox/searchBox"
 import './App.css'
-import { selectError, selectIsLoading } from "./redux/contactsSlice";
-import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
-import { fetchContacts } from "./redux/contactsOps";
+import { Suspense, lazy } from "react";
+import { Route, Routes } from "react-router-dom";
+const HomePage = lazy(() => import('./pages/HomePage/HomePage'));
+const ContactsPage = lazy(() => import('./pages/ContactsPage/ContactsPage'));
+const LoginPage = lazy(() => import('./pages/LoginPage/LoginPage'));
+const RegistrationPage = lazy(() => import('./pages/RegistrationPage/RegistrationPage '));
+import NotFoundPage from "./pages/NotFoundPage/NotFoundPage";
+import Layout from './components/Layout/Layout';
+
 
 function App() {
 
-    const dispatch = useDispatch();
-  const loading = useSelector(selectIsLoading);
-  const error = useSelector(selectError);
-
-  useEffect(() => {
-    dispatch(fetchContacts());
-  }, [dispatch]);
-
   return (
-    <div>
-      {loading && <h2>Loading...</h2>}
-      {error && <h2>error</h2>}
-      <h1>Phonebook</h1>
-      <ContactForm  />
-      <SearchBox  />
-      <ContactList  />
-    </div>
+    <Layout>
+        <Suspense fallback={<div>Loading...</div>}>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/register" element={<RegistrationPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/contacts" element={<ContactsPage />} />
+            <Route path="*" element={<NotFoundPage/>}/>
+          </Routes>
+      </Suspense>
+    </Layout>
   )
 }
 
