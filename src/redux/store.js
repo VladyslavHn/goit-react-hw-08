@@ -3,7 +3,7 @@ import { contactsReducer } from './contacts/slice'
 import { filtersReducer } from './filters/slice'
 import {
   persistStore,
-  persistReducer,
+   persistReducer,
   FLUSH,
   REHYDRATE,
   PAUSE,
@@ -12,17 +12,20 @@ import {
   REGISTER,
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
+import { authReducer } from "./auth/slice";
 
-const phoneBookPersistConfig = {
-  key: "phoneBook",
+const authPeristConfig = {
+  key: "auth",
   storage,
-  whitelist: ["items"],
+  whitelist: ["token"],
 };
 
+
 export const store = configureStore({
-    reducer: {
-        contacts: persistReducer(phoneBookPersistConfig, contactsReducer),
-        filters: filtersReducer,
+  reducer: {
+    auth: persistReducer(authPeristConfig, authReducer),
+    contacts: contactsReducer,
+    filters: filtersReducer,
     },
     middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
