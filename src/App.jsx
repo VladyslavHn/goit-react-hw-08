@@ -10,6 +10,8 @@ import RegistrationPage from './pages/RegistrationPage/RegistrationPage ';
 import LoginPage from './pages/LoginPage/LoginPage';
 import { useDispatch } from 'react-redux';
 import { apiRefreshUser } from './redux/auth/operations';
+import RestrictedRoute from './components/RestrictedRoute/RestrictedRoute';
+import PrivateRoute from './components/PrivateRoute/PrivateRoute';
 
 
 function App() {
@@ -17,7 +19,7 @@ function App() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(apiRefreshUser)
+    dispatch(apiRefreshUser())
   }, [dispatch]);
 
   return (
@@ -25,9 +27,21 @@ function App() {
         <Suspense fallback={<div>Loading...</div>}>
           <Routes>
             <Route path="/" element={<HomePage />} />
-            <Route path="/register" element={<RegistrationPage />} />
-            <Route path="/login" element={<LoginPage/>} />
-            <Route path="/contacts" element={<ContactsPage />} />
+          <Route path="/register" element={
+            <RestrictedRoute>
+              <RegistrationPage />
+            </RestrictedRoute>
+          } />
+          <Route path="/login" element={
+            <RestrictedRoute>
+              <LoginPage />
+            </RestrictedRoute>
+          } />
+          <Route path="/contacts" element={
+            <PrivateRoute>
+              <ContactsPage />
+            </PrivateRoute>
+            } />
             <Route path="*" element={<NotFoundPage/>}/>
           </Routes>
       </Suspense>

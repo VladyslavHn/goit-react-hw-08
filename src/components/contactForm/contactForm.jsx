@@ -2,7 +2,7 @@ import { Form, Formik, Field, ErrorMessage } from "formik"
 import * as Yup from "yup";
 import css from './contactForm.module.css';
 import { useDispatch } from "react-redux";
-import { addContact } from "../../redux/contacts/operations";
+import { apiAddContact } from "../../redux/contacts/operations";
 
 const initialValues = {
     name: "",
@@ -19,7 +19,7 @@ const ContactForm = () => {
   const dispatch = useDispatch();
 
   const handleSubmit = (values, { resetForm }) => {
-    dispatch(addContact(values));
+    dispatch(apiAddContact(values));
     resetForm();
   }
 

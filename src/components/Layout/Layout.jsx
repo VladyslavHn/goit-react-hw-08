@@ -1,13 +1,22 @@
 
 
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { selectIsSignedIn } from '../../redux/auth/selectors';
 import { NavLink } from 'react-router-dom';
 import css from './Navigation.module.css'
+import { apiLogout } from '../../redux/auth/operations';
 
 
 const Layout = ({ children }) => {
+  const dispatch = useDispatch();
   const isSignedIn = useSelector(selectIsSignedIn)
+
+  const logout = () => {
+    if (isSignedIn) {
+      dispatch(apiLogout());
+    }
+  };
+
   return (
     <div>
       <header>
@@ -16,7 +25,11 @@ const Layout = ({ children }) => {
       {isSignedIn ? (
         <>
           <NavLink className={css.link} to="/contacts">Contacts</NavLink>
+            <div>
+                <button onClick={logout} type='button'>Logout</button>
+            </div>
         </>
+            
       ) : (
         <>
           <NavLink className={css.link} to="/register">Register</NavLink>
