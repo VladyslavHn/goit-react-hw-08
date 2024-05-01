@@ -6,11 +6,12 @@ const authSlice = createSlice({
  name: "auth",
 
     initialState: {
-        isSignedIn: false,
+        isLoggedIn: false,
         userData: '',
         token: null,
         loading: false,
-        error: false,
+       error: false,
+        isRefreshing: false,
  
    },
 
@@ -18,32 +19,43 @@ const authSlice = createSlice({
       builder
          .addCase(apiRegister.fulfilled, (state, action) => { 
             state.loading = false;
-            state.isSignedIn = true;
+            state.isLoggedIn = true;
              state.userData = action.payload.user;
              state.token = action.payload.token;
          })
          .addCase(apiLogin.fulfilled, (state, action) => { 
             state.loading = false;
-            state.isSignedIn = true;
+            state.isLoggedIn = true;
              state.userData = action.payload.user;
-             state.token = action.payload.token;
-         })
-         .addCase(apiRefreshUser.fulfilled, (state, action) => { 
-            state.loading = false;
-            state.isSignedIn = true;
-             state.userData = action.payload;
+            state.token = action.payload.token;
          })
          .addCase(apiLogout.fulfilled, (state) => { 
             state.loading = false;
-            state.isSignedIn = false;
+            state.isLoggedIn = false;
              state.userData = null;
              state.token = null;
          })
-         .addMatcher(isAnyOf(apiRegister.pending, apiLogin.pending, apiRefreshUser.pending, apiLogout.pending), (state) => {
+         .addCase(apiRefreshUser.pending, state => {
+        state.loading = true;
+        state.error = false;
+        state.isRefreshing = true;
+      })
+      .addCase(apiRefreshUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.userData = action.payload;
+        state.isLoggedIn = true;
+        state.isRefreshing = false;
+      })
+      .addCase(apiRefreshUser.rejected, state => {
+        state.loading = false;
+        state.error = true;
+        state.isRefreshing = false;
+      })
+         .addMatcher(isAnyOf(apiRegister.pending, apiLogin.pending, apiLogout.pending), (state) => {
          state.loading = true;
             state.error = false;
          })
-         .addMatcher(isAnyOf(apiRegister.rejected, apiLogin.rejected, apiRefreshUser.rejected, apiLogout.rejected), (state) => {
+         .addMatcher(isAnyOf(apiRegister.rejected, apiLogin.rejected, apiLogout.rejected), (state) => {
          state.loading = false;
             state.error = true;
       })

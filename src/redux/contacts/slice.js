@@ -1,5 +1,6 @@
 import { createSlice, isAnyOf } from "@reduxjs/toolkit";
 import { apiAddContact, apiDeleteContact, apiGetContacts  } from "./operations";
+import { apiLogout } from "../auth/operations";
 
 
 const contactsSlice = createSlice({
@@ -28,11 +29,16 @@ const contactsSlice = createSlice({
             state.error = null;
             state.contacts = state.contacts.filter(contact => contact.id !== action.payload.id);
          })
-      .addMatcher(isAnyOf(apiGetContacts.pending, apiAddContact.pending, apiDeleteContact.pending), (state) => {
+         .addCase(apiLogout.fulfilled, (state) => { 
+            state.loading = false;
+            state.error = null;
+            state.contacts = null;
+         })
+      .addMatcher(isAnyOf(apiGetContacts.pending, apiAddContact.pending, apiDeleteContact.pending, apiLogout.pending), (state) => {
          state.loading = true;
             state.error = false;
          })
-         .addMatcher(isAnyOf(apiGetContacts.rejected, apiAddContact.rejected, apiDeleteContact.rejected), (state) => {
+         .addMatcher(isAnyOf(apiGetContacts.rejected, apiAddContact.rejected, apiDeleteContact.rejected, apiLogout.rejected), (state) => {
          state.loading = false;
             state.error = true;
       })
